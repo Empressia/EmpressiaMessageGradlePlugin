@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.test.config": [
+			{
+				"vmargs": [
+					"-DTestFrom=Visual Studio Code"
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,3 @@
+plugins {
+	id "jp.empressia.gradle.plugin.message";
+}

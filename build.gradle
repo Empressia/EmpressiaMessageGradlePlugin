@@ -1,0 +1,94 @@
+plugins {
+	id "java";
+	id "com.gradle.plugin-publish" version "0.12.0";
+	id "java-gradle-plugin";
+	id "maven-publish";
+	id "jp.empressia.gradle.plugin.misc" version "1.0.5";
+}
+
+ext.moduleName = "jp.empressia.gradle.plugin.message";
+ext.junitVersion = "5.7.0";
+ext.hamcrestVersion = "2.2";
+// for plugin setting.
+group = "gradle.plugin.jp.empressia";
+archivesBaseName = moduleName;
+
+repositories {
+	mavenCentral();
+}
+
+dependencies {
+	// use Gradle API.
+	implementation gradleApi();
+	implementation(group:"jp.empressia", name:"jp.empressia.message.generator", version:"1.0.0");
+
+	// use JUnit test framework.
+	testImplementation(group:"org.junit.jupiter", name:"junit-jupiter-api", version:junitVersion);
+	testRuntimeOnly(group:"org.junit.jupiter", name:"junit-jupiter-engine", version:junitVersion);
+	testImplementation(group:"org.hamcrest", name:"hamcrest", version:hamcrestVersion);
+
+	testImplementation gradleTestKit();
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8";
+	options.release = 11;
+	options.compilerArgs << "-parameters";
+}
+
+java {
+	withJavadocJar();
+	withSourcesJar();
+}
+
+javadoc {
+	options.charSet "UTF-8";
+	options.encoding "UTF-8";
+	options.addBooleanOption("html5", true);
+	options.addStringOption("Xdoclint:none", "-quiet");
+}
+
+test {
+	useJUnitPlatform();
+}
+
+gradlePlugin {
+	plugins {
+		EmpressiaPlugin  {
+			id = moduleName;
+			implementationClass = moduleName + "." + "Plugin";
+		}
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = group;
+			artifactId = moduleName;
+			from components.java;
+		}
+	}
+	repositories {
+		maven {
+			url = local_network_repository_url;
+		}
+	}
+}
+
+pluginBundle {
+	website = "https://www.empressia.jp/";
+	vcsUrl = "https://github.com/Empressia/EmpressiaMessageGradlePlugin/";
+	description = "Empressia Message Tasks by Empressia.";
+	tags = ["task"];
+
+	plugins {
+		EmpressiaPlugin {
+			displayName = "Empressia Message Gradle Plugin";
+		}
+	}
+	mavenCoordinates {
+		artifactId = moduleName;
+		version = version;
+	}
+}

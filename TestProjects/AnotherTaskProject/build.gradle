@@ -1,0 +1,24 @@
+plugins {
+	id "java";
+	id "jp.empressia.gradle.plugin.message";
+}
+
+repositories {
+	mavenCentral();
+}
+
+dependencies {
+	implementation(group:"jp.empressia", name:"jp.empressia.message", version:"1.0.0");
+}
+
+task generateToolEmpressiaMessage(type: jp.empressia.gradle.plugin.message.task.EmpressiaMessageTaskSupport) {
+	extension {
+		messagePropertyFilePaths = files("src/tool/resources/message.properties");
+		sourceDirectoryPath = file("src/tool/java/");
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding "UTF-8";
+	options.compilerArgs << "-parameters";
+}

@@ -1,0 +1,31 @@
+plugins {
+	id "java";
+	id "jp.empressia.gradle.plugin.message";
+}
+
+repositories {
+	mavenCentral();
+}
+
+dependencies {
+	implementation(group:"jp.empressia", name:"jp.empressia.message", version:"1.0.0");
+}
+
+empressia {
+	message {
+		messagePropertyFilePaths = files("src/main/resources/empressia_message.properties");
+		author = "Sphere";
+		sourceDirectoryPath = file("src/main/java/");
+		packageName = "jp.empressia.message.generated.configured";
+		messageClassName = "EMessage";
+		exceptionClassName = "EMessageException";
+		adaptorClassName = "EMessages";
+		commentoutGeneratedAnnotation = true;
+		createMessageIDConstants = true;
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding "UTF-8";
+	options.compilerArgs << "-parameters";
+}
