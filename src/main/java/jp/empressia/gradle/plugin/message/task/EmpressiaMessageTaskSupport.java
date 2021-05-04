@@ -2,6 +2,7 @@ package jp.empressia.gradle.plugin.message.task;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -99,6 +100,21 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 
 	/** このタスクの設定をします。 */
 	private void setConfiguration(Configuration configuration) {
+		if(this.getLogger().isInfoEnabled()) {
+			this.getLogger().info("configuration.BaseDirectoryPath -> {}.", configuration.BaseDirectoryPath);
+			this.getLogger().info("configuration.MessagePropertyFilePaths -> {}.", Arrays.toString(configuration.MessagePropertyFilePaths));
+			this.getLogger().info("configuration.Author -> {}.", configuration.Author);
+			this.getLogger().info("configuration.SourceDirectoryPath -> {}.", configuration.SourceDirectoryPath);
+			this.getLogger().info("configuration.PackageName -> {}.", configuration.PackageName);
+			this.getLogger().info("configuration.MessageClassName -> {}.", configuration.MessageClassName);
+			this.getLogger().info("configuration.ExceptionClassName -> {}.", configuration.ExceptionClassName);
+			this.getLogger().info("configuration.AdaptorClassName -> {}.", configuration.AdaptorClassName);
+			this.getLogger().info("configuration.SuppressOutputExceptionClass -> {}.", configuration.SuppressOutputExceptionClass);
+			this.getLogger().info("configuration.SuppressOutputAdaptorClass -> {}.", configuration.SuppressOutputAdaptorClass);
+			this.getLogger().info("configuration.CommentoutGeneratedAnnotation -> {}.", configuration.CommentoutGeneratedAnnotation);
+			this.getLogger().info("configuration.CreateMessageIDConstants -> {}.", configuration.CreateMessageIDConstants);
+			this.getLogger().info("configuration.Help -> {}.", configuration.Help);
+		}
 		try {
 			Path sourceDirectoryPath = Utilities.getSourceDirectoryPath(configuration, MessageGenerator.DEFAULT_SOuRTH_DIRECTORY_PATH);
 			{
