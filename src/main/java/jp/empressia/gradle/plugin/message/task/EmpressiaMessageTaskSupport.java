@@ -162,7 +162,7 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 	public void setExtension(Extension extension) {
 		Configuration configuration = extension.convert();
 		if(configuration.BaseDirectoryPath == null) {
-			this.getProject().getProjectDir();
+			configuration.BaseDirectoryPath = this.getProject().getProjectDir().getAbsolutePath();
 		}
 		this.setConfiguration(configuration);
 	}
