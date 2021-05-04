@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.stream.Collectors;
@@ -57,10 +58,27 @@ public class PluginTests {
 		PluginTests.ClasspathFiles = classpathFiles;
 	}
 
+	/** 指定されたパスとその配下を削除します。 */
+	private void deletePath(Path targetPath) throws IOException {
+		if(Files.exists(targetPath) == false) { return; }
+		Iterable<Path> paths = Files.walk(targetPath)
+			.sorted(Comparator.reverseOrder())::iterator;
+		for(Path p : paths) {
+			Files.delete(p);
+		}
+	}
+
 	/** メッセージファイルがなければ、生成されずに正常に終了する。 */
 	@Test
 	public void メッセージファイルがなければ生成されずに正常に終了する() {
 		Path projectDirectoryPath = Path.of("TestProjects", "NoMessageProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
@@ -70,10 +88,9 @@ public class PluginTests {
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
 
-		Path sourceDirecotryPath = projectDirectoryPath.resolve("src");
 		assertAll(
 			() -> assertThat("失敗していない。", taskResult, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
-			() -> assertThat("何も生成されていない。", Files.exists(sourceDirecotryPath), is(false))
+			() -> assertThat("何も生成されていない。", Files.exists(generatedDirectoryPath), is(false))
 		);
 	}
 
@@ -81,6 +98,13 @@ public class PluginTests {
 	@Test
 	public void コンパイルしようとするとソースコードが一通り生成されてコンパイルも正常に終了する() {
 		Path projectDirectoryPath = Path.of("TestProjects", "SimpleMessageProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		f = new File(f.getAbsolutePath());
 		BuildResult result = GradleRunner.create()
@@ -91,7 +115,6 @@ public class PluginTests {
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
 
-		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
 		assertAll(
 			() -> assertThat("失敗していない。", taskResult, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
 			() -> assertThat("生成先のディレクトリが作られている。", Files.exists(generatedDirectoryPath), is(true))
@@ -102,6 +125,13 @@ public class PluginTests {
 	@Test
 	public void タスクを2回実行すると2回目はUP_TO_DATEになる() {
 		Path projectDirectoryPath = Path.of("TestProjects", "SimpleMessageProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		f = new File(f.getAbsolutePath());
 		GradleRunner gr = GradleRunner.create()
@@ -115,7 +145,6 @@ public class PluginTests {
 		System.out.println(result2.getOutput());
 		TaskOutcome taskResult2 = result2.task(":generateEmpressiaMessage").getOutcome();
 
-		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
 		assertAll(
 			() -> assertThat("1回目が失敗していない。", taskResult1, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
 			() -> assertThat("2回目がUP_TO_DATEになっている。", taskResult2, is(TaskOutcome.UP_TO_DATE)),
@@ -127,6 +156,16 @@ public class PluginTests {
 	@Test
 	public void 設定が反映されたソースコードが生成されてコンパイルできる() {
 		Path projectDirectoryPath = Path.of("TestProjects", "ConfiguredProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/configured/");
+		Path messageSourceFilePath = generatedDirectoryPath.resolve("EMessage.java");
+		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("EMessageException.java");
+		Path adapterSourceFilePath = generatedDirectoryPath.resolve("EMessages.java");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		f = new File(f.getAbsolutePath());
 		BuildResult result = GradleRunner.create()
@@ -137,10 +176,6 @@ public class PluginTests {
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
 
-		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/configured/");
-		Path messageSourceFilePath = generatedDirectoryPath.resolve("EMessage.java");
-		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("EMessageException.java");
-		Path adapterSourceFilePath = generatedDirectoryPath.resolve("EMessages.java");
 		assertAll(
 			() -> assertThat("失敗していない。", taskResult, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
 			() -> assertThat("生成先のディレクトリが作られている。", Files.exists(generatedDirectoryPath), is(true)),
@@ -155,6 +190,16 @@ public class PluginTests {
 	@Test
 	public void 設定が反映されて出力を抑えたソースコードが生成されない() {
 		Path projectDirectoryPath = Path.of("TestProjects", "SuppressedProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
+		Path messageSourceFilePath = generatedDirectoryPath.resolve("Message.java");
+		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("MessageException.java");
+		Path adapterSourceFilePath = generatedDirectoryPath.resolve("Messages.java");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		f = new File(f.getAbsolutePath());
 		BuildResult result = GradleRunner.create()
@@ -165,10 +210,6 @@ public class PluginTests {
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
 
-		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/main/java/jp/empressia/message/generated/");
-		Path messageSourceFilePath = generatedDirectoryPath.resolve("Message.java");
-		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("MessageException.java");
-		Path adapterSourceFilePath = generatedDirectoryPath.resolve("Messages.java");
 		assertAll(
 			() -> assertThat("失敗していない。", taskResult, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
 			() -> assertThat("生成先のディレクトリが作られている。", Files.exists(generatedDirectoryPath), is(true)),
@@ -182,6 +223,16 @@ public class PluginTests {
 	@Test
 	public void 別のタスクを登録して動かせる() {
 		Path projectDirectoryPath = Path.of("TestProjects", "AnotherTaskProject");
+		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/tool/java/jp/empressia/message/generated/");
+		Path messageSourceFilePath = generatedDirectoryPath.resolve("Message.java");
+		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("MessageException.java");
+		Path adapterSourceFilePath = generatedDirectoryPath.resolve("Messages.java");
+		try {
+			this.deletePath(generatedDirectoryPath);
+		} catch(IOException ex) {
+			throw new IllegalStateException("テストで使用するパスの準備に失敗しました。", ex);
+		}
+
 		File f = projectDirectoryPath.toFile();
 		f = new File(f.getAbsolutePath());
 		BuildResult result = GradleRunner.create()
@@ -192,10 +243,6 @@ public class PluginTests {
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateToolEmpressiaMessage").getOutcome();
 
-		Path generatedDirectoryPath = projectDirectoryPath.resolve("src/tool/java/jp/empressia/message/generated/");
-		Path messageSourceFilePath = generatedDirectoryPath.resolve("Message.java");
-		Path exceptionSourceFilePath = generatedDirectoryPath.resolve("MessageException.java");
-		Path adapterSourceFilePath = generatedDirectoryPath.resolve("Messages.java");
 		assertAll(
 			() -> assertThat("失敗していない。", taskResult, oneOf(TaskOutcome.UP_TO_DATE, TaskOutcome.SUCCESS)),
 			() -> assertThat("生成先のディレクトリが作られている。", Files.exists(generatedDirectoryPath), is(true)),
