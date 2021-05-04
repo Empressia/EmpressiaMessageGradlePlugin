@@ -44,6 +44,13 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 	@InputFiles
 	public ConfigurableFileCollection getMessagePropertyFilePaths() { return this.MessagePropertyFiles; }
 
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です（Incremental用のプロパティです）。 */
+	private Property<String> MessagePropertyResourceLocation;
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です（Incremental用のプロパティです）。 */
+	@Optional
+	@Input
+	public Property<String> getMessagePropertyResourceLocation() { return this.MessagePropertyResourceLocation; }
+
 	/** 著作者です（Incremental用のプロパティです）。 */
 	private Property<String> Author;
 	/** 著作者です（Incremental用のプロパティです）。 */
@@ -103,6 +110,7 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 		if(this.getLogger().isInfoEnabled()) {
 			this.getLogger().info("configuration.BaseDirectoryPath -> {}.", configuration.BaseDirectoryPath);
 			this.getLogger().info("configuration.MessagePropertyFilePaths -> {}.", Arrays.toString(configuration.MessagePropertyFilePaths));
+			this.getLogger().info("configuration.MessagePropertyResourceLocation -> {}.", configuration.MessagePropertyResourceLocation);
 			this.getLogger().info("configuration.Author -> {}.", configuration.Author);
 			this.getLogger().info("configuration.SourceDirectoryPath -> {}.", configuration.SourceDirectoryPath);
 			this.getLogger().info("configuration.PackageName -> {}.", configuration.PackageName);
@@ -120,6 +128,10 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 			{
 				File[] newMessagePropertyFiles = Stream.of(Utilities.getMessagePropertyFilePaths(configuration)).map(p -> p.toFile()).toArray(File[]::new);
 				this.MessagePropertyFiles.setFrom((Object[])newMessagePropertyFiles);
+			}
+			{
+				String messagePropertyResourceLocation = Utilities.getMessagePropertyResourceLocation(configuration, MessageGenerator.DEFAULT_SOuRTH_DIRECTORY_PATH);
+				this.MessagePropertyResourceLocation.set(messagePropertyResourceLocation);
 			}
 			{
 				this.Author.set(configuration.Author);
@@ -180,6 +192,7 @@ public class EmpressiaMessageTaskSupport extends DefaultTask {
 		this.setGroup("Help");
 		this.setDescription("generate Empressia Message classes.");
 		this.MessagePropertyFiles = objectFactory.fileCollection();
+		this.MessagePropertyResourceLocation = objectFactory.property(String.class);
 		this.Author = objectFactory.property(String.class);
 		this.MessageClassFile = objectFactory.fileProperty();
 		this.ExceptionClassFile = objectFactory.fileProperty();

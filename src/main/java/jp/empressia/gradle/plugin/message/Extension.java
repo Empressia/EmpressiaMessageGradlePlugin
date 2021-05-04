@@ -57,6 +57,17 @@ public class Extension {
 	/** 入力となるメッセージプロパティファイルです。 */
 	public void MessagePropertyFilePaths(FileCollection MessagePropertyFilePaths) { this.setMessagePropertyFilePaths(MessagePropertyFilePaths); }
 
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+	private String MessagePropertyResourceLocation;
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+	public String getMessagePropertyResourceLocation() { return this.MessagePropertyResourceLocation; }
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+	public void setMessagePropertyResourceLocation(String MessagePropertyResourceLocation) { this.MessagePropertyResourceLocation = MessagePropertyResourceLocation; }
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+	public String MessagePropertyResourceLocation() { return this.MessagePropertyResourceLocation; }
+	/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+	public void MessagePropertyResourceLocation(String MessagePropertyResourceLocation) { this.setMessagePropertyResourceLocation(MessagePropertyResourceLocation); }
+
 	/** 著作者です。 */
 	private String Author;
 	/** 著作者です。 */
@@ -202,6 +213,7 @@ public class Extension {
 			messagePropertyFilePaths.add(f.getPath());
 		}
 		configuration.MessagePropertyFilePaths = messagePropertyFilePaths.toArray(String[]::new);
+		configuration.MessagePropertyResourceLocation = this.getMessagePropertyResourceLocation();
 		configuration.Author = this.getAuthor();
 		Directory sourceDirectory = this.getSourceDirectoryPath().getOrNull();
 		String sourceDirectoryPath = (sourceDirectory != null) ? sourceDirectory.getAsFile().getPath() : null;

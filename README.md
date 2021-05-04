@@ -32,13 +32,16 @@ Generatorで生成されたクラスの使い方は、Empressia Messageを参照
 
 ### タスクの設定
 
-empressia.messageで、設定を行い、generateEmpressiaMessageタスクの動作を変更できます。  
+必要に応じて、empressia.messageで、設定を行い、  
+generateEmpressiaMessageタスクの動作を変更できます。  
 
 ```groovy
 empressia {
 	message {
 		// 入力となるメッセージプロパティファイルです。
 		messagePropertyFilePaths = files("src/main/resources/message.properties");
+		// 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。
+		messagePropertyResourceLocation = "message");
 		// 著作者です。
 		author = "すふぃあ";
 		// 出力先となるソースディレクトリです。
