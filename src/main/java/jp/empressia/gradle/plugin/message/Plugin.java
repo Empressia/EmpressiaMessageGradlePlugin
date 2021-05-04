@@ -1,22 +1,11 @@
 package jp.empressia.gradle.plugin.message;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-
-import javax.inject.Inject;
-
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.file.Directory;
-import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.tasks.TaskProvider;
 
 import jp.empressia.gradle.plugin.message.task.EmpressiaMessageTaskSupport;
-import jp.empressia.message.generator.MessageGenerator.Configuration;
 
 /**
  * Empressia製のGradle用のプラグインです。
