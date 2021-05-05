@@ -1,5 +1,6 @@
 package jp.empressia.gradle.plugin.message;
 
+import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.ExtensionAware;
@@ -28,17 +29,17 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
 		}
 		ExtensionAware empressiaExtension = (ExtensionAware)project.getExtensions().findByName(EXTENSION_GROUP_NAME);
 		Extension extension = empressiaExtension.getExtensions().create(EXTENSION_NAME, Extension.class);
-		project.getLogger().debug("extension {}.{} created.", EXTENSION_GROUP_NAME, EXTENSION_NAME);
+		project.getLogger().info("extension {}.{} created.", EXTENSION_GROUP_NAME, EXTENSION_NAME);
 
 		TaskProvider<? extends Task> taskProvider = project.getTasks().register(TASK_NAME, EmpressiaMessageTaskSupport.class, (t) -> {
 			t.setExtension(extension);
 		});
-		project.getLogger().debug("task {} registered.", TASK_NAME);
+		project.getLogger().info("task {} registered.", TASK_NAME);
 
 		Task compileJavaTask = project.getTasks().findByName("compileJava");
 		if(compileJavaTask != null) {
 			compileJavaTask.dependsOn(taskProvider);
-			project.getLogger().debug("task dependency compileJava -> {} registered.", TASK_NAME);
+			project.getLogger().info("task dependency compileJava -> {} registered.", TASK_NAME);
 		}
 	}
 

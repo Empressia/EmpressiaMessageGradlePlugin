@@ -83,7 +83,7 @@ public class PluginTests {
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("generateEmpressiaMessage")
+			.withArguments("generateEmpressiaMessage", "--info")
 			.build();
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
@@ -110,7 +110,7 @@ public class PluginTests {
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("compileJava")
+			.withArguments("compileJava", "--info")
 			.build();
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
@@ -137,7 +137,7 @@ public class PluginTests {
 		GradleRunner gr = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("generateEmpressiaMessage");
+			.withArguments("generateEmpressiaMessage", "--info");
 		BuildResult result1 = gr.build();
 		System.out.println(result1.getOutput());
 		TaskOutcome taskResult1 = result1.task(":generateEmpressiaMessage").getOutcome();
@@ -171,7 +171,7 @@ public class PluginTests {
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("generateEmpressiaMessage", "compileJava")
+			.withArguments("generateEmpressiaMessage", "compileJava", "--info")
 			.build();
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
@@ -205,7 +205,7 @@ public class PluginTests {
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("generateEmpressiaMessage")
+			.withArguments("generateEmpressiaMessage", "--info")
 			.build();
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateEmpressiaMessage").getOutcome();
@@ -238,7 +238,7 @@ public class PluginTests {
 		BuildResult result = GradleRunner.create()
 			.withPluginClasspath(PluginTests.ClasspathFiles)
 			.withProjectDir(f)
-			.withArguments("generateToolEmpressiaMessage")
+			.withArguments("generateToolEmpressiaMessage", "--info")
 			.build();
 		System.out.println(result.getOutput());
 		TaskOutcome taskResult = result.task(":generateToolEmpressiaMessage").getOutcome();
