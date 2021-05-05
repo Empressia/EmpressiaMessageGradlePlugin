@@ -36,10 +36,17 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
 		});
 		project.getLogger().info("task {} registered.", TASK_NAME);
 
+		Action<Task> taskDependencyRegister = (t) -> {
+			if(t.getName().equals("compileJava")) {
+				t.dependsOn(taskProvider);
+			}
+			project.getLogger().info("task dependency {} -> {} registered.", t.getName(), TASK_NAME);
+		};
 		Task compileJavaTask = project.getTasks().findByName("compileJava");
 		if(compileJavaTask != null) {
-			compileJavaTask.dependsOn(taskProvider);
-			project.getLogger().info("task dependency compileJava -> {} registered.", TASK_NAME);
+			taskDependencyRegister.execute(compileJavaTask);
+		} else {
+			project.getTasks().whenTaskAdded(taskDependencyRegister);
 		}
 	}
 
