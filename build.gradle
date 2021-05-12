@@ -20,7 +20,7 @@ repositories {
 dependencies {
 	// use Gradle API.
 	implementation gradleApi();
-	implementation(group:"jp.empressia", name:"jp.empressia.message.generator", version:"1.1.1");
+	implementation(group:"jp.empressia", name:"jp.empressia.message.generator", version:"1.1.3");
 
 	// use JUnit test framework.
 	testImplementation(group:"org.junit.jupiter", name:"junit-jupiter-api", version:junitVersion);
